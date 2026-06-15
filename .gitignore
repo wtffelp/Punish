@@ -1,0 +1,10 @@
+target/
+.vscode/
+*.class
+*.jar
+*.log
+.env
+db.properties
+.DS_Store
+*.iml
+.idea/
