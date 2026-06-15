@@ -515,8 +515,3 @@ Difícil + Não essencial → ADIA (P3)
 - Jogador não pode estar duplicado no mesmo torneio
 - Máximo 16 jogadores no MVP
 
----
-
-## Licença
-
-MIT
