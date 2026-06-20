@@ -1,0 +1,79 @@
+package com.punish.Repository;
+
+import java.util.List;
+
+import org.jdbi.v3.core.Jdbi;
+
+import com.punish.Config.Database;
+import com.punish.Model.Match;
+
+public class MatchRepository {
+
+    // - criar(Match match) → Match
+    // - buscarPorId(long id) → Match (ou null)
+    // - buscarPorTournament(long tournamentId) → List<Match>
+    // - atualizarVencedor(long matchId, Long winnerId, Integer score1, Integer score2) → void
+    // - atualizarPlayer1(long matchId, Long playerId) → void
+    // - atualizarPlayer2(long matchId, Long playerId) → void
+    
+    Jdbi jdbi = Database.getJdbi();
+
+    public Match criarMatch(Match match){
+        return jdbi.withHandle(handle -> 
+            handle.createUpdate("""
+                INSERT INTO matches (fk_tournament_id, fk_player1_id, fk_player2_id, bracket_type, round_number, match_number, fk_next_match_win_id, fk_next_match_lose_id, status) VALUES (:fk_tournament_id, :fk_player1_id, :fk_player2_id, :bracket_type, :round_number, :match_number, :fk_next_match_win_id, :fk_next_match_lose_id, :status)
+            """)
+            .bindBean(match)
+            .executeAndReturnGeneratedKeys("id")
+            .mapToBean(Match.class)
+            .findOne()
+            .orElse(null)
+        );
+    }
+
+    public Match buscarPorId(long id){
+        return jdbi.withHandle(handle -> 
+            handle.createQuery("SELECT * FROM matches WHERE id = :id")
+            .bind("id", id)
+            .mapToBean(Match.class)
+            .findOne()
+            .orElse(null)
+        );
+    }
+
+    public List<Match> buscarPorTournament(long fk_tournament_id){
+        return jdbi.withHandle(handle -> 
+            handle.createQuery("SELECT * FROM matches WHERE fk)tournament_id = :tid")
+            .bind("tid", fk_tournament_id)
+            .mapToBean(Match.class)
+            .list()
+        );
+    }
+
+    public void atualizarVencedor(long id, Long fk_winner_id, Integer score_player1, Integer score_player2){
+        jdbi.withHandle(handle -> 
+            handle.createUpdate("UPDATE matches SET fk_winner_id = :winnerId, score_player1 = :score1, score_player2 = :score2, status = 'FINISHED' WHERE id = :id")
+            .bind("winnerId", fk_winner_id)
+            .bind("score1", score_player1)
+            .bind("score2", score_player2)
+            .bind("id", id)
+            .execute()
+        );
+    }
+
+    public void atualizarPlayer1(long id, Long fk_player1_id){
+        jdbi.withHandle(handle ->
+            handle.createUpdate("UPDATE matches SET fk_player1_id = :pid1 WHERE id = :id")
+            .bind("pid1", fk_player1_id)
+            .execute()
+        );
+    }
+
+    public void atualizarPlayer2(long id, Long fk_player2_id){
+        jdbi.withHandle(handle ->
+            handle.createUpdate("UPDATE matches SET fk_player2_id = :pid2 WHERE id = :id")
+            .bind("pid2", fk_player2_id)
+            .execute()
+        );
+    }
+}
