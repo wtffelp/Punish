@@ -18,7 +18,7 @@ public class MatchRepository {
     
     Jdbi jdbi = Database.getJdbi();
 
-    public Match criarMatch(Match match){
+    public Match criar(Match match){
         return jdbi.withHandle(handle -> 
             handle.createUpdate("""
                 INSERT INTO matches (fk_tournament_id, fk_player1_id, fk_player2_id, bracket_type, round_number, match_number, fk_next_match_win_id, fk_next_match_lose_id, status) VALUES (:fk_tournament_id, :fk_player1_id, :fk_player2_id, :bracket_type, :round_number, :match_number, :fk_next_match_win_id, :fk_next_match_lose_id, :status)
@@ -43,7 +43,7 @@ public class MatchRepository {
 
     public List<Match> buscarPorTournament(long fk_tournament_id){
         return jdbi.withHandle(handle -> 
-            handle.createQuery("SELECT * FROM matches WHERE fk)tournament_id = :tid")
+            handle.createQuery("SELECT * FROM matches WHERE fk_tournament_id = :tid")
             .bind("tid", fk_tournament_id)
             .mapToBean(Match.class)
             .list()
@@ -65,6 +65,7 @@ public class MatchRepository {
         jdbi.withHandle(handle ->
             handle.createUpdate("UPDATE matches SET fk_player1_id = :pid1 WHERE id = :id")
             .bind("pid1", fk_player1_id)
+            .bind("id", id)
             .execute()
         );
     }
@@ -73,6 +74,7 @@ public class MatchRepository {
         jdbi.withHandle(handle ->
             handle.createUpdate("UPDATE matches SET fk_player2_id = :pid2 WHERE id = :id")
             .bind("pid2", fk_player2_id)
+            .bind("id", id)
             .execute()
         );
     }
