@@ -3,6 +3,7 @@ package com.punish.Service;
 import java.util.List;
 
 import com.punish.Model.Tournament;
+import com.punish.Model.Enums.TournamentStatus;
 import com.punish.Repository.TournamentRepository;
 
 public class TournamentService {
@@ -17,7 +18,9 @@ public class TournamentService {
     }
 
     public Tournament buscarPorId(Long id){
-        return tournamentRepository.buscarPorId(id);
+        Tournament t = tournamentRepository.buscarPorId(id);
+        if (t == null) throw new RuntimeException("Torneio não encontrado");
+        return t;
     }
 
     public List<Tournament> buscarPorNome(String name){
@@ -25,14 +28,20 @@ public class TournamentService {
     }
 
     public Tournament atualizarTournament(Long id, String name, String game){
+        Tournament t = buscarPorId(id);
+        if (t.getStatus() == TournamentStatus.FINISHED) {
+            throw new RuntimeException("Torneio ja foi encerrado");
+        }
         return tournamentRepository.atualizarTournament(id, name, game);
     }
     
     public Tournament atualizarStatus(Long id, String status){
+        buscarPorId(id);
         return tournamentRepository.atualizarStatus(id, status);
     }
 
     public void deletar(Long id){
+        buscarPorId(id);
         tournamentRepository.deletar(id);
     }
 }
