@@ -8,13 +8,6 @@ import com.punish.Config.Database;
 import com.punish.Model.TournamentPlayer;
 
 public class TournamentPlayerRepository {
-    //  - criar(long tournamentId, long playerId) → TournamentPlayer
-    //  - deletar(long tournamentId, long playerId) → void
-    //  - buscarPlayersPorTournament(long tournamentId) → List<Player>
-    //  - existe(long tournamentId, long playerId) → boolean
-    //  - contarPorTournament(long tournamentId) → int
-    //  - atualizarSeed(long tournamentId, long playerId, int seed) → void
-
     Jdbi jdbi = Database.getJdbi();
     
     public TournamentPlayer criarTournamentPlayer(Long fk_tournament_id, Long fk_player_id){

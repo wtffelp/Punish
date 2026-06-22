@@ -8,13 +8,6 @@ import com.punish.Config.Database;
 import com.punish.Model.Match;
 
 public class MatchRepository {
-
-    // - criar(Match match) → Match
-    // - buscarPorId(long id) → Match (ou null)
-    // - buscarPorTournament(long tournamentId) → List<Match>
-    // - atualizarVencedor(long matchId, Long winnerId, Integer score1, Integer score2) → void
-    // - atualizarPlayer1(long matchId, Long playerId) → void
-    // - atualizarPlayer2(long matchId, Long playerId) → void
     
     Jdbi jdbi = Database.getJdbi();
 

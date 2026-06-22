@@ -9,10 +9,6 @@ import com.punish.Config.Database;
 import com.punish.Model.Tournament;
 
 public class PlayerRepository {
-    // - criar(String nickname) → Player
-    // - buscarPorId(long id) → Player (ou null)
-    // - buscarPorNickname(String nickname) → Player (ou null)
-    // - buscarTodos() → List<Player>
     Jdbi jdbi = Database.getJdbi();
     public Tournament criarPlayer(String nickname){
         return jdbi.withHandle(handle -> {
