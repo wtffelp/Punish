@@ -6,45 +6,45 @@ import java.util.Optional;
 import org.jdbi.v3.core.Jdbi;
 
 import com.punish.Config.Database;
-import com.punish.Model.Tournament;
+import com.punish.Model.Player;
 
 public class PlayerRepository {
     Jdbi jdbi = Database.getJdbi();
-    public Tournament criarPlayer(String nickname){
+    public Player criarPlayer(String nickname){
         return jdbi.withHandle(handle -> {
-            return handle.createUpdate("INSERT INTO player (nicknack) VALUES (nickname)")
+            return handle.createUpdate("INSERT INTO player (nickname) VALUES (:nickname)")
             .bind("nickname", nickname)
             .executeAndReturnGeneratedKeys("id")
-            .mapToBean(Tournament.class)
+            .mapToBean(Player.class)
             .findOne()
             .orElse(null);
         });
     }
 
-    public Tournament buscarPorId(Long id){
-        Tournament tournament = jdbi.withHandle(handle -> {
-            Optional<Tournament> result = handle.createQuery("SELECT * FROM player WHERE id = :id")
+    public Player buscarPorId(Long id){
+        Player player = jdbi.withHandle(handle -> {
+            Optional<Player> result = handle.createQuery("SELECT * FROM player WHERE id = :id")
             .bind("id", id)
-            .mapToBean(Tournament.class)
+            .mapToBean(Player.class)
             .findOne();
             return result.orElse(null);
         });
-        return tournament;
+        return player;
     }
 
-    public List<Tournament> buscarPorNickname(String nickname){
+    public List<Player> buscarPorNickname(String nickname){
         return jdbi.withHandle(handle -> {
             return handle.createQuery("SELECT * FROM player WHERE nickname = :nickname")
                 .bind("nickname", nickname)
-                .mapToBean(Tournament.class)
+                .mapToBean(Player.class)
                 .list();
         });
     }
 
-    public List<Tournament> buscarTodosOsPlayers(){
+    public List<Player> buscarTodosOsPlayers(){
         return jdbi.withHandle(handle -> {
             return handle.createQuery("SELECT * FROM player")
-            .mapToBean(Tournament.class)
+            .mapToBean(Player.class)
             .list();
         });
     }
