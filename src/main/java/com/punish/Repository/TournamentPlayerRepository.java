@@ -5,6 +5,7 @@ import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 
 import com.punish.Config.Database;
+import com.punish.Model.Player;
 import com.punish.Model.TournamentPlayer;
 
 public class TournamentPlayerRepository {
@@ -12,7 +13,7 @@ public class TournamentPlayerRepository {
     
     public TournamentPlayer criarTournamentPlayer(Long fk_tournament_id, Long fk_player_id){
         return jdbi.withHandle(handle -> {
-            return handle.createUpdate("INSERT INTO tournament_player (fk_tournament_id, fk_player_id) VALUES (:fk_tournament_id, fk_player_id)")
+            return handle.createUpdate("INSERT INTO tournament_player (fk_tournament_id, fk_player_id) VALUES (:fk_tournament_id, :fk_player_id)")
                 .bind("fk_tournament_id", fk_tournament_id)
                 .bind("fk_player_id", fk_player_id)
                 .executeAndReturnGeneratedKeys("id")
@@ -48,6 +49,15 @@ public class TournamentPlayerRepository {
                 .mapTo(Boolean.class)
                 .findOne()
                 .orElse(false)
+        );
+    }
+
+    public List<Player> buscarPlayerDoTournament(Long fk_tournament_id){
+        return jdbi.withHandle(handle -> 
+            handle.createQuery("SELECT p.id p.nickname FROM player p INNER JOIN tournament_player tp ON p.id = tp.fk_player_id WHERE tp.fk_tournament_id = :tid")
+            .bind("tid", fk_tournament_id)
+            .mapToBean(Player.class)
+            .list()
         );
     }
 
