@@ -40,6 +40,22 @@ public class TournamentService {
         return tournamentRepository.atualizarStatus(id, status);
     }
 
+    public void start(Long id) {
+        Tournament t = buscarPorId(id);
+        if (t.getStatus() != TournamentStatus.CREATED) {
+            throw new RuntimeException("Torneio não pode ser iniciado");
+        }
+        tournamentRepository.atualizarStatus(id, "STARTED");
+    }
+
+    public void finalizar(Long id) {
+        Tournament t = buscarPorId(id);
+        if (t.getStatus() != TournamentStatus.CREATED) {
+            throw new RuntimeException("Torneio não pode ser iniciado");
+        }
+        tournamentRepository.atualizarStatus(id, "F");
+    }
+
     public void deletar(Long id){
         buscarPorId(id);
         tournamentRepository.deletar(id);
