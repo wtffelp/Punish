@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.punish.Model.Player;
 import com.punish.Model.Tournament;
-import com.punish.Model.TournamentPlayer;
 import com.punish.Model.Enums.TournamentStatus;
 import com.punish.Repository.PlayerRepository;
 import com.punish.Repository.TournamentPlayerRepository;

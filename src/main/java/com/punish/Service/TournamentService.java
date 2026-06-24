@@ -48,7 +48,7 @@ public class TournamentService {
         tournamentRepository.atualizarStatus(id, "STARTED");
     }
 
-    public void finalizar(Long id) {
+    public void finish(Long id) {
         Tournament t = buscarPorId(id);
         if (t.getStatus() != TournamentStatus.CREATED) {
             throw new RuntimeException("Torneio não pode ser iniciado");
