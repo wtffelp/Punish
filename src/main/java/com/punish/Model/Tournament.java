@@ -8,6 +8,7 @@ public class Tournament {
     private Long id;
     private String name;
     private String game;
+    private Long fk_winner_id;
     private TournamentStatus status;
     private Timestamp criado_em;
 
@@ -21,6 +22,9 @@ public class Tournament {
 
     public String getGame() { return game; }
     public void setGame(String game) { this.game = game; }
+
+    public Long getFk_winner_id() { return fk_winner_id; }
+    public void setFk_winner_id(Long fk_winner_id) { this.fk_winner_id = fk_winner_id; }
     
     public TournamentStatus getStatus() { return status; }
     public void setStatus(TournamentStatus status) { this.status = status; }
