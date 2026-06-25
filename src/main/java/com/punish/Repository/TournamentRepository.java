@@ -52,6 +52,17 @@ public class TournamentRepository {
         });
     }
 
+    public Tournament atualizarCampeao(Long id, Long fk_winner_id){
+        jdbi.withHandle(handle -> {
+            return handle.createUpdate("UPDATE tournament SET fk_winner_id = :fk_winner_id WHERE id = :id")
+            .bind("fk_winner_id", fk_winner_id)
+            .bind("id", id)
+            .execute();
+        });
+        Tournament tournament = buscarPorId(id);
+        return tournament;
+    }
+
     public Tournament atualizarTournament(Long id, String name, String game){
         jdbi.withHandle(handle -> {
             return handle.createUpdate("UPDATE tournament SET name = :name, game = :game WHERE id = :id")
