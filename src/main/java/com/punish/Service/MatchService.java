@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.punish.Model.Match;
 import com.punish.Repository.MatchRepository;
+import com.punish.Repository.TournamentRepository;
 
 public class MatchService {
     MatchRepository matchRepository = new MatchRepository();
+    TournamentRepository tournamentRepository = new TournamentRepository();
 
     public Match buscarPorId(Long id){
         Match m = matchRepository.buscarPorId(id);
@@ -33,6 +35,19 @@ public class MatchService {
             throw new RuntimeException("Vencedor inválido");
         }
         matchRepository.atualizarVencedor(id, fk_winner_id, score_player1, score_player2);
+        Match next_match = matchRepository.buscarPorId(m.getFk_next_match_win_id());
+        if (next_match == null) {
+            tournamentRepository.atualizarCampeao(id, fk_winner_id);
+            tournamentRepository.atualizarStatus(id, "FINISHED");
+            return matchRepository.buscarPorId(id);
+        }
+        if (next_match.getFk_player1_id() == null) {
+            matchRepository.atualizarPlayer1(m.getFk_next_match_win_id(), fk_winner_id);
+        } else if (next_match.getFk_player2_id() == null) {
+            matchRepository.atualizarPlayer2(m.getFk_next_match_win_id(), fk_winner_id);
+        } else {
+            throw new RuntimeException("Não existe vaga nessa partida");
+        }
         return matchRepository.buscarPorId(id);
     }
 }
