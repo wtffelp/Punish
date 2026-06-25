@@ -1,0 +1,52 @@
+package com.punish.Controller;
+
+import java.util.List;
+import java.util.Map;
+
+import com.punish.Model.Player;
+import com.punish.Service.PlayerService;
+
+import io.javalin.Javalin;
+
+public class PlayerController {
+    PlayerService playerService = new PlayerService();
+
+    public void playerRoutes(Javalin app){
+        app.get("/players", ctx -> {
+            List<Player> players = playerService.buscarTodosOsPlayers();
+            ctx.json(players);
+        });
+
+        app.post("/players", ctx -> {
+            Map<String, String> body = ctx.bodyAsClass(Map.class);
+            Player p = playerService.criarPlayer(body.get("nickname"));
+            ctx.status(201).json(p);
+        });
+
+        app.get("/players/{id}", ctx -> {
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            Player p = playerService.buscarPorId(id);
+            ctx.json(p);
+        });
+
+        app.post("/tournaments/{id}/players", ctx -> {
+            Long tournament_id = Long.parseLong(ctx.pathParam("id"));
+            Map<String, Long> body = ctx.bodyAsClass(Map.class);
+            playerService.adicionarAoTournament(tournament_id, body.get("playerId"));
+            ctx.status(204);
+        });
+
+        app.get("/tournaments/{id}/players", ctx -> {
+            Long tournament_id = Long.parseLong(ctx.pathParam("id"));
+            List<Player> p = playerService.buscarPlayersDoTournament(tournament_id);
+            ctx.json(p);
+        });
+
+        app.delete("/tournaments/{id}/players/{player_id}", ctx -> {
+            Long tournament_id = Long.parseLong(ctx.pathParam("id"));
+            Long player_id = Long.parseLong(ctx.pathParam("player_id"));
+            playerService.removerPlayersDoTournament(tournament_id, player_id);
+            ctx.status(204);
+        });
+    }
+}
