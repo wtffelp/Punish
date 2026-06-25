@@ -4,15 +4,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.eclipse.jetty.http.HttpTester.Input;
 import org.jdbi.v3.core.Jdbi;
 
+import com.punish.Model.Enums.BracketType;
+import com.punish.Model.Enums.MatchStatus;
+import com.punish.Model.Enums.TournamentStatus;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class Database {
     private static Jdbi jdbi;
     private static HikariDataSource datasSource;
+
+    public static Jdbi getJdbi() {
+        if (jdbi == null) {
+            jdbi = Jdbi.create(getDataSource());
+            jdbi.registerColumnMapper(TournamentStatus.class, new TournamentStatusMapper());
+            jdbi.registerColumnMapper(BracketType.class, (rs, col, ctx) -> BracketType.valueOf(rs.getString(col)));
+            jdbi.registerColumnMapper(MatchStatus.class, (rs, col, ctx) -> MatchStatus.valueOf(rs.getString(col)));
+        }
+        return jdbi;
+    }
+
     public static Properties loadProperties() throws IOException{
         Properties props = new Properties();
         try (InputStream input = Database.class.getResourceAsStream("/application.properties")) {
