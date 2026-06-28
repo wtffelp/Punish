@@ -11,17 +11,18 @@ import com.punish.Model.Tournament;
 public class TournamentRepository {
     Jdbi jdbi = Database.getJdbi();
     public Tournament criarTournament(String name, String game){ 
-        return jdbi.withHandle(handle -> {
+        Long id = jdbi.withHandle(handle -> {
             return handle.createUpdate("""
                 INSERT INTO tournament (name, game) VALUES (:name, :game)
             """)
             .bind("name", name)
             .bind("game", game)
             .executeAndReturnGeneratedKeys("id")
-            .mapToBean(Tournament.class)
+            .mapTo(Long.class)
             .findOne()
             .orElse(null);
         });
+        return buscarPorId(id);
     }
     
     public List<Tournament> buscarTodosOsTorneios(){

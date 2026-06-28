@@ -11,14 +11,15 @@ import com.punish.Model.Player;
 public class PlayerRepository {
     Jdbi jdbi = Database.getJdbi();
     public Player criarPlayer(String nickname){
-        return jdbi.withHandle(handle -> {
+        Long id = jdbi.withHandle(handle -> {
             return handle.createUpdate("INSERT INTO player (nickname) VALUES (:nickname)")
             .bind("nickname", nickname)
             .executeAndReturnGeneratedKeys("id")
-            .mapToBean(Player.class)
+            .mapTo(Long.class)
             .findOne()
             .orElse(null);
         });
+        return buscarPorId(id);
     }
 
     public Player buscarPorId(Long id){

@@ -12,16 +12,17 @@ public class MatchRepository {
     Jdbi jdbi = Database.getJdbi();
 
     public Match criar(Match match){
-        return jdbi.withHandle(handle -> 
+        Long id = jdbi.withHandle(handle -> 
             handle.createUpdate("""
                 INSERT INTO matches (fk_tournament_id, fk_player1_id, fk_player2_id, bracket_type, round_number, match_number, fk_next_match_win_id, fk_next_match_lose_id, status) VALUES (:fk_tournament_id, :fk_player1_id, :fk_player2_id, :bracket_type, :round_number, :match_number, :fk_next_match_win_id, :fk_next_match_lose_id, :status)
             """)
             .bindBean(match)
             .executeAndReturnGeneratedKeys("id")
-            .mapToBean(Match.class)
+            .mapTo(Long.class)
             .findOne()
             .orElse(null)
         );
+        return buscarPorId(id);
     }
 
     public Match buscarPorId(long id){

@@ -12,15 +12,16 @@ public class TournamentPlayerRepository {
     Jdbi jdbi = Database.getJdbi();
     
     public TournamentPlayer criarTournamentPlayer(Long fk_tournament_id, Long fk_player_id){
-        return jdbi.withHandle(handle -> {
+        Long id = jdbi.withHandle(handle -> {
             return handle.createUpdate("INSERT INTO tournament_player (fk_tournament_id, fk_player_id) VALUES (:fk_tournament_id, :fk_player_id)")
                 .bind("fk_tournament_id", fk_tournament_id)
                 .bind("fk_player_id", fk_player_id)
                 .executeAndReturnGeneratedKeys("id")
-                .mapToBean(TournamentPlayer.class)
+                .mapTo(Long.class)
                 .findOne()
                 .orElse(null);
         });
+        return buscarPorId(id);
     }
 
     public void deletarTournamentPlayer(Long fk_tournament_id, Long fk_player_id){
@@ -30,6 +31,16 @@ public class TournamentPlayerRepository {
             .bind("fk_player_id", fk_player_id)
             .execute();
         });
+    }
+
+    public TournamentPlayer buscarPorId(Long id){
+        return jdbi.withHandle(handle -> 
+            handle.createQuery("SELECT * FROM tournament_player WHERE id = :id")
+            .bind("id", id)
+            .mapToBean(TournamentPlayer.class)
+            .findOne()
+            .orElse(null)
+        );
     }
 
     public List<TournamentPlayer> buscarPlayerPorTournament(Long fk_tournament_id){
@@ -52,11 +63,11 @@ public class TournamentPlayerRepository {
         );
     }
 
-    public List<TournamentPlayer> buscarPlayerDoTournament(Long fk_tournament_id){
+    public List<Player> buscarPlayerDoTournament(Long fk_tournament_id){
         return jdbi.withHandle(handle -> 
             handle.createQuery("SELECT p.id, p.nickname FROM player p INNER JOIN tournament_player tp ON p.id = tp.fk_player_id WHERE tp.fk_tournament_id = :tid")
             .bind("tid", fk_tournament_id)
-            .mapToBean(TournamentPlayer.class)
+            .mapToBean(Player.class)
             .list()
         );
     }
