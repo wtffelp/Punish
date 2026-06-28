@@ -73,6 +73,16 @@ public class MatchRepository {
         );
     }
 
+    public long contarPorStatus(String status){
+        return jdbi.withHandle(handle ->
+            handle.createQuery("SELECT COUNT(*) FROM matches WHERE status = :status")
+                .bind("status", status)
+                .mapTo(Long.class)
+                .findOne()
+                .orElse(0L)
+        );
+    }
+
     public void atualizarPlayer1(long id, Long fk_player1_id){
         jdbi.withHandle(handle ->
             handle.createUpdate("UPDATE matches SET fk_player1_id = :pid1 WHERE id = :id")
