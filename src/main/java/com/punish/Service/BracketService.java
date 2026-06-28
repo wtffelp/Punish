@@ -121,39 +121,8 @@ public class BracketService {
             Long winner = match.getFk_winner_id();
 
             if (winner != null) continue;
-            if (p1 == null && p2 == null) continue;
             if (p1 != null && p2 != null) {
                 matchRepository.atualizarStatus("READY", match.getId());
-            } else if (p1 != null && p2 == null) {
-                matchRepository.atualizarVencedor(match.getId(), p1, 0, 0);
-                matchRepository.atualizarStatus("FINISHED", match.getId());
-                Match prox = matches.stream()
-                    .filter(m -> m.getId().equals(match.getFk_next_match_win_id()))
-                    .findFirst().orElse(null);
-                if (prox != null) {
-                    if (prox.getFk_player1_id() == null) {
-                        matchRepository.atualizarPlayer1(prox.getId(), p1);
-                        prox.setFk_player1_id(p1);
-                    } else {
-                        matchRepository.atualizarPlayer2(prox.getId(), p1);
-                        prox.setFk_player2_id(p1);
-                    }
-                }
-            } else if (p1 == null && p2 != null) {
-                matchRepository.atualizarVencedor(match.getId(), p2, 0, 0);
-                matchRepository.atualizarStatus("FINISHED", match.getId());
-                Match prox = matches.stream()
-                    .filter(m -> m.getId().equals(match.getFk_next_match_win_id()))
-                    .findFirst().orElse(null);
-                if (prox != null) {
-                    if (prox.getFk_player1_id() == null) {
-                        matchRepository.atualizarPlayer1(prox.getId(), p2);
-                        prox.setFk_player1_id(p2);
-                    } else {
-                        matchRepository.atualizarPlayer2(prox.getId(), p2);
-                        prox.setFk_player2_id(p2);
-                    }
-                }
             }
         }
 
