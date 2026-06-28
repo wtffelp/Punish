@@ -1,5 +1,6 @@
 package com.punish;
 
+import com.punish.Controller.DashboardController;
 import com.punish.Controller.MatchController;
 import com.punish.Controller.PlayerController;
 import com.punish.Controller.TournamentController;
@@ -19,6 +20,7 @@ public class App
             });
         }).start(7000);
 
+        new DashboardController().dashboardRoutes(javalin);
         new MatchController().matchRoutes(javalin);
         new PlayerController().playerRoutes(javalin);
         new TournamentController().tournamentRoutes(javalin);
