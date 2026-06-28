@@ -49,4 +49,12 @@ public class PlayerRepository {
             .list();
         });
     }
+
+    public void deletar(Long id){
+        jdbi.withHandle(handle ->
+            handle.createUpdate("DELETE FROM player WHERE id = :id")
+            .bind("id", id)
+            .execute()
+        );
+    }
 }

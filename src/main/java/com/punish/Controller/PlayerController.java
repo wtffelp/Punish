@@ -49,5 +49,11 @@ public class PlayerController {
             playerService.removerPlayersDoTournament(tournament_id, player_id);
             ctx.status(204);
         });
+
+        app.delete("/players/{id}", ctx -> {
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            playerService.deletarPlayer(id);
+            ctx.status(204);
+        });
     }
 }

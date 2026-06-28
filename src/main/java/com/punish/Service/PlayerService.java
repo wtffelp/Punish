@@ -57,4 +57,9 @@ public class PlayerService {
     public List<Player> buscarPlayersDoTournament(Long tournament_id){
         return tournamentPlayerRepository.buscarPlayerDoTournament (tournament_id);
     }
+
+    public void deletarPlayer(Long id){
+        buscarPorId(id);
+        playerRepository.deletar(id);
+    }
 }
