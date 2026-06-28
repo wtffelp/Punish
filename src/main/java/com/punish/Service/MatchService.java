@@ -43,7 +43,11 @@ public class MatchService {
             throw new RuntimeException("Vencedor inválido");
         }
         matchRepository.atualizarVencedor(id, fk_winner_id, score_player1, score_player2);
-        Match next_match = matchRepository.buscarPorId(m.getFk_next_match_win_id());
+        Long nextMatchId = m.getFk_next_match_win_id();
+        Match next_match = null;
+        if (nextMatchId != null) {
+            next_match = matchRepository.buscarPorId(nextMatchId);
+        }
         if (next_match == null) {
             tournamentRepository.atualizarCampeao(m.getFk_tournament_id(), fk_winner_id);
             tournamentRepository.atualizarStatus(m.getFk_tournament_id(), "FINISHED");
@@ -56,6 +60,12 @@ public class MatchService {
         } else {
             throw new RuntimeException("Não existe vaga nessa partida");
         }
+
+        Match nextAtualizada = matchRepository.buscarPorId(m.getFk_next_match_win_id());
+        if (nextAtualizada.getFk_player1_id() != null && nextAtualizada.getFk_player2_id() != null) {
+            matchRepository.atualizarStatus("READY", nextAtualizada.getId());
+        }
+        
         return matchRepository.buscarPorId(id);
     }
 }
