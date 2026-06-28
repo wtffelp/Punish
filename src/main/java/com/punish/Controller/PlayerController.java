@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.punish.Model.Player;
+import com.punish.Model.TournamentPlayer;
 import com.punish.Service.PlayerService;
 
 import io.javalin.Javalin;
@@ -38,7 +39,7 @@ public class PlayerController {
 
         app.get("/tournaments/{id}/players", ctx -> {
             Long tournament_id = Long.parseLong(ctx.pathParam("id"));
-            List<Player> p = playerService.buscarPlayersDoTournament(tournament_id);
+            List<TournamentPlayer> p = playerService.buscarPlayersDoTournament(tournament_id);
             ctx.json(p);
         });
 

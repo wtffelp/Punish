@@ -45,7 +45,7 @@ public class TournamentRepository {
 
     public List<Tournament> buscarPorNome(String name){
         return jdbi.withHandle(handle -> {
-            return handle.createQuery("SELECT * FROM tournament WHERE name")
+            return handle.createQuery("SELECT * FROM tournament WHERE name = :name")
                 .bind("name", name)
                 .mapToBean(Tournament.class)
                 .list();

@@ -1,9 +1,9 @@
 package com.punish.Controller;
 
 import java.util.List;
-import java.util.Map;
 
 import com.punish.Model.Match;
+import com.punish.Model.ResultadoRequest;
 import com.punish.Service.MatchService;
 
 import io.javalin.Javalin;
@@ -26,9 +26,8 @@ public class MatchController {
 
         app.patch("/matches/{id}/result", ctx -> {
             Long match_id = Long.parseLong(ctx.pathParam("id"));
-            Map<String, Integer> body = ctx.bodyAsClass(Map.class);
-            Long winner = body.get("fk_winner_id").longValue();
-            Match matchAtualizada = matchService.registrarResultado(match_id, winner, body.get("score_player1"), body.get("score_player2"));
+            ResultadoRequest body = ctx.bodyAsClass(ResultadoRequest.class);
+            Match matchAtualizada = matchService.registrarResultado(match_id, body.fk_winner_id(), body.score_player1(), body.score_player2());
             ctx.json(matchAtualizada);
         });
     }

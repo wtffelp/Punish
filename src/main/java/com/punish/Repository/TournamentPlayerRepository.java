@@ -52,11 +52,11 @@ public class TournamentPlayerRepository {
         );
     }
 
-    public List<Player> buscarPlayerDoTournament(Long fk_tournament_id){
+    public List<TournamentPlayer> buscarPlayerDoTournament(Long fk_tournament_id){
         return jdbi.withHandle(handle -> 
-            handle.createQuery("SELECT p.id p.nickname FROM player p INNER JOIN tournament_player tp ON p.id = tp.fk_player_id WHERE tp.fk_tournament_id = :tid")
+            handle.createQuery("SELECT p.id, p.nickname FROM player p INNER JOIN tournament_player tp ON p.id = tp.fk_player_id WHERE tp.fk_tournament_id = :tid")
             .bind("tid", fk_tournament_id)
-            .mapToBean(Player.class)
+            .mapToBean(TournamentPlayer.class)
             .list()
         );
     }

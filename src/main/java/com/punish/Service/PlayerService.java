@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.punish.Model.Player;
 import com.punish.Model.Tournament;
+import com.punish.Model.TournamentPlayer;
 import com.punish.Model.Enums.TournamentStatus;
 import com.punish.Repository.PlayerRepository;
 import com.punish.Repository.TournamentPlayerRepository;
@@ -54,7 +55,7 @@ public class PlayerService {
         tournamentPlayerRepository.deletarTournamentPlayer(tournament_id, player_id);
     }
 
-    public List<Player> buscarPlayersDoTournament(Long tournament_id){
+    public List<TournamentPlayer> buscarPlayersDoTournament(Long tournament_id){
         return tournamentPlayerRepository.buscarPlayerDoTournament (tournament_id);
     }
 }

@@ -22,6 +22,14 @@ public class MatchService {
         return matchRepository.buscarPorTournament(fk_tournament_id);
     }
 
+    public void atualizarNextMatchWin(Long fk_next_match_win_id, Long id){
+        matchRepository.atualizarNextMatchWin(fk_next_match_win_id, id);
+    }
+
+    public void atualizarStatus(String status, Long id){
+        matchRepository.atualizarStatus(status, id);
+    }
+
     public Match registrarResultado(Long id, Long fk_winner_id, Integer score_player1, Integer score_player2){
         Match m = matchRepository.buscarPorId(id);
         if (m == null) throw new RuntimeException("Partida não encontrada");
@@ -37,8 +45,8 @@ public class MatchService {
         matchRepository.atualizarVencedor(id, fk_winner_id, score_player1, score_player2);
         Match next_match = matchRepository.buscarPorId(m.getFk_next_match_win_id());
         if (next_match == null) {
-            tournamentRepository.atualizarCampeao(id, fk_winner_id);
-            tournamentRepository.atualizarStatus(id, "FINISHED");
+            tournamentRepository.atualizarCampeao(m.getFk_tournament_id(), fk_winner_id);
+            tournamentRepository.atualizarStatus(m.getFk_tournament_id(), "FINISHED");
             return matchRepository.buscarPorId(id);
         }
         if (next_match.getFk_player1_id() == null) {

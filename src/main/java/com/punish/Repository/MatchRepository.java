@@ -54,6 +54,24 @@ public class MatchRepository {
         );
     }
 
+    public void atualizarNextMatchWin(Long fk_next_match_win_id, Long id){
+        jdbi.withHandle(handle -> 
+            handle.createUpdate("UPDATE matches SET fk_next_match_win_id = :fk_next_match_win_id WHERE id = :id")
+            .bind("fk_next_match_win_id", fk_next_match_win_id)
+            .bind("id", id)
+            .execute()
+        );
+    }
+
+    public void atualizarStatus(String status, Long id){
+        jdbi.withHandle(handle -> 
+            handle.createUpdate("UPDATE matches SET status = :status WHERE id = :id")
+            .bind("status", status)
+            .bind("id", id)
+            .execute()
+        );
+    }
+
     public void atualizarPlayer1(long id, Long fk_player1_id){
         jdbi.withHandle(handle ->
             handle.createUpdate("UPDATE matches SET fk_player1_id = :pid1 WHERE id = :id")
