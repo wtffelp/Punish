@@ -9,3 +9,5 @@ db.properties
 *.iml
 .idea/
 src/main/resources/application.propertiesdependency-reduced-pom.xml
+dependency-reduced-pom.xml
+application.properties

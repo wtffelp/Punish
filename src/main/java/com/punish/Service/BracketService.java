@@ -2,6 +2,7 @@ package com.punish.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.punish.Model.Match;
@@ -24,12 +25,18 @@ public class BracketService {
         int tamanho_bracket = calcularTamanhoBracket(players.size());
         int byes = tamanho_bracket - players.size();
         List<Player> slots = new ArrayList<>();
-        slots.addAll(players);
+        int playerIdx = 0;
+        int nullsLeft = byes;
+        for (int i = 0; i < tamanho_bracket; i++) {
+            if (i % 2 == 1 && nullsLeft > 0) {
+                slots.add(null);
+                nullsLeft--;
+            } else {
+                slots.add(players.get(playerIdx++));
+            }
+        }
         int numRodadas = (int) (Math.log(tamanho_bracket) / Math.log(2));
         List<Match> matches = new ArrayList<>();
-        for(int i = 0; i < byes; i++){
-            slots.add(null);
-        }
         for(int r = 1; r <= numRodadas; r++){
             int divisor = (int) Math.pow(2, r);
             int partidas_nessa_rodada = tamanho_bracket/divisor;
@@ -78,8 +85,10 @@ public class BracketService {
                              .orElse(null);
                 if (prox.getFk_player1_id() == null) {
                     matchRepository.atualizarPlayer2(prox.getId(), p2.getId());
+                    prox.setFk_player2_id(p2.getId());
                 } else {
                     matchRepository.atualizarPlayer1(prox.getId(), p2.getId());
+                    prox.setFk_player1_id(p2.getId());
                 }
             } else if (p2 == null){
                 matchRepository.atualizarPlayer1(match.getId(), p1.getId());
@@ -91,11 +100,63 @@ public class BracketService {
                              .orElse(null);
                 if (prox.getFk_player1_id() == null) {
                     matchRepository.atualizarPlayer1(prox.getId(), p1.getId());
+                    prox.setFk_player1_id(p1.getId());
                 } else {
                     matchRepository.atualizarPlayer2(prox.getId(), p1.getId());
+                    prox.setFk_player2_id(p1.getId());
+                }
+            } else {
+                matchRepository.atualizarStatus("FINISHED", match.getId());
+            }
+        }
+
+        List<Match> roundsAcima = matches.stream()
+            .sorted(Comparator.comparingInt(Match::getRound_number))
+            .toList();
+
+        for (Match match : roundsAcima) {
+            if (match.getRound_number() == 1) continue;
+            Long p1 = match.getFk_player1_id();
+            Long p2 = match.getFk_player2_id();
+            Long winner = match.getFk_winner_id();
+
+            if (winner != null) continue;
+            if (p1 == null && p2 == null) continue;
+            if (p1 != null && p2 != null) {
+                matchRepository.atualizarStatus("READY", match.getId());
+            } else if (p1 != null && p2 == null) {
+                matchRepository.atualizarVencedor(match.getId(), p1, 0, 0);
+                matchRepository.atualizarStatus("FINISHED", match.getId());
+                Match prox = matches.stream()
+                    .filter(m -> m.getId().equals(match.getFk_next_match_win_id()))
+                    .findFirst().orElse(null);
+                if (prox != null) {
+                    if (prox.getFk_player1_id() == null) {
+                        matchRepository.atualizarPlayer1(prox.getId(), p1);
+                        prox.setFk_player1_id(p1);
+                    } else {
+                        matchRepository.atualizarPlayer2(prox.getId(), p1);
+                        prox.setFk_player2_id(p1);
+                    }
+                }
+            } else if (p1 == null && p2 != null) {
+                matchRepository.atualizarVencedor(match.getId(), p2, 0, 0);
+                matchRepository.atualizarStatus("FINISHED", match.getId());
+                Match prox = matches.stream()
+                    .filter(m -> m.getId().equals(match.getFk_next_match_win_id()))
+                    .findFirst().orElse(null);
+                if (prox != null) {
+                    if (prox.getFk_player1_id() == null) {
+                        matchRepository.atualizarPlayer1(prox.getId(), p2);
+                        prox.setFk_player1_id(p2);
+                    } else {
+                        matchRepository.atualizarPlayer2(prox.getId(), p2);
+                        prox.setFk_player2_id(p2);
+                    }
                 }
             }
         }
+
         return matches;
     }
 }
