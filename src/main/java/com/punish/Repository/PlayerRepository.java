@@ -50,6 +50,15 @@ public class PlayerRepository {
         });
     }
 
+    public long contarPlayers(){
+        return jdbi.withHandle(handle ->
+            handle.createQuery("SELECT COUNT(*) FROM player")
+                .mapTo(Long.class)
+                .findOne()
+                .orElse(0L)
+        );
+    }
+
     public void deletar(Long id){
         jdbi.withHandle(handle ->
             handle.createUpdate("DELETE FROM player WHERE id = :id")
